@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
+import pandas as pd
 from dotmap import DotMap
 
 
@@ -31,3 +32,11 @@ def get_logger(name: Optional[str] = None):
     handler.setFormatter(formatter)
     logger.addHandler(handler)
     return logger
+
+
+def get_df(path_or_df: Union[Path, pd.DataFrame]) -> pd.DataFrame:
+    if isinstance(path_or_df, Path):
+        df = pd.read_csv(path_or_df, lineterminator="\n")
+    else:
+        df = path_or_df
+    return df

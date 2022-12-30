@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 import re
 import pandas as pd
-from utils import get_logger
+from utils import get_logger, get_df
 from tqdm import tqdm
 
 logger = get_logger("data")
@@ -71,4 +71,30 @@ def normalize_title_date(data_file: Path, omit_strings_file: Path, normalized_da
     df["date_normalized"] = df[date_column].progress_apply(
         lambda x: pd.Timestamp(x).replace(hour=0, minute=0, second=0))
     logger.info(f"Saving normalized URL data to file: {normalized_data_file}")
+    normalized_data_dir = normalized_data_file.parent
+    if not normalized_data_dir.exists():
+        normalized_data_dir.mkdir(parents=True)
     df.to_csv(normalized_data_file, index=False)
+
+
+def sort_filter_clusters(path_or_df: Union[Path, pd.DataFrame], cluster_label_column: str = "cluster_label",
+                         cluster_probability_column: str = "cluster_probability",
+                         normalized_date_column: str = "date_normalized",
+                         social_score_column: str = "social_score",
+                         cluster_probability_threshold: float = 0.75) -> pd.DataFrame:
+    df = get_df(path_or_df)
+    logger.info(f"Sorting and filtering data frame with {df.shape[0]} rows")
+    df = df[df[cluster_probability_column] >= cluster_probability_threshold]
+    df = df.sort_values(
+        by=[cluster_label_column, normalized_date_column, social_score_column, cluster_probability_column],
+        ascending=(False, False, False, False))
+    return df
+
+
+def compute_cluster_social_scores(path_or_df: Union[Path, pd.DataFrame], cluster_label_column: str = "cluster_label",
+                                  social_score_column: str = "social_score") -> pd.DataFrame:
+    df = get_df(path_or_df)
+    df_ = df.groupby(by=[cluster_label_column])[social_score_column].sum()
+    df_ = df_.to_frame().sort_values(by=social_score_column, ascending=False)
+    df_.reset_index(inplace=True)
+    return df_

@@ -7,3 +7,6 @@ numpy==1.24.1
 joblib==1.2.0
 hdbscan==0.8.29
 scikit-learn==1.2.0
+yake==0.4.8
+topically==0.0.5
+cohere==3.1.3

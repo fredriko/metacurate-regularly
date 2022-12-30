@@ -55,6 +55,5 @@ class HdbScanClusterer(object):
         data.insert(loc=0, column="cluster_label", value=clusterer.labels_)
         data.insert(loc=1, column="cluster_probability", value=clusterer.probabilities_)
         if sort:
-            data = data.sort_values(["cluster_label", "cluster_probability", "social_score"],
-                                    ascending=(False, False, False))
+            data = data.sort_values(["cluster_label", "cluster_probability"], ascending=(False, False))
         return data

@@ -1,0 +1,20 @@
+{
+  "data": {
+    "raw": "./data/news_urls.csv",
+    "normalized": "./data/transient/news_urls_normalized.csv",
+    "clustered": "./data/transient/news_urls_clustered.csv",
+    "cache": "./data/transient/.cache"
+  },
+  "resources": {
+    "omit_strings": "./resources/omit_strings.csv"
+  },
+  "vectorizer": {
+    "model_name_or_path": "all-mpnet-base-v2"
+  },
+  "clusterer": {
+    "metric": "precomputed",
+    "cluster_selection_method": "leaf",
+    "min_cluster_size": 5,
+    "min_samples": 2
+  }
+}

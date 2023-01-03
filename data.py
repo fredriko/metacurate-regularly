@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Any
 import re
 import pandas as pd
 from utils import get_logger, get_df
@@ -8,7 +8,7 @@ from tqdm import tqdm
 logger = get_logger("data")
 
 
-def load_omit_strings(omit_strings_file: Path, string_column: str = "term") -> List[str]:
+def load_omit_strings(omit_strings_file: str, string_column: str = "term") -> List[str]:
     """
     Reads a CSV file with strings to omit from web page titles.
 
@@ -55,7 +55,7 @@ def normalize_title(title: str, omit_strings: List[str], lower_case: bool = Fals
     return title.strip().lower() if lower_case else title.strip()
 
 
-def normalize_title_date(data_file: Path, omit_strings_file: Path, normalized_data_file: Path,
+def normalize_title_date(data_file: str, omit_strings_file: str, normalized_data_file: str,
                          title_column: str = "title", date_column: str = "listed_at_date", **kwargs) -> None:
     logger.info(f"Reading URL data from file: {data_file}")
     df = pd.read_csv(data_file)
@@ -71,13 +71,13 @@ def normalize_title_date(data_file: Path, omit_strings_file: Path, normalized_da
     df["date_normalized"] = df[date_column].progress_apply(
         lambda x: pd.Timestamp(x).replace(hour=0, minute=0, second=0))
     logger.info(f"Saving normalized URL data to file: {normalized_data_file}")
-    normalized_data_dir = normalized_data_file.parent
+    normalized_data_dir = Path(normalized_data_file).parent
     if not normalized_data_dir.exists():
         normalized_data_dir.mkdir(parents=True)
     df.to_csv(normalized_data_file, index=False)
 
 
-def sort_filter_clusters(path_or_df: Union[Path, pd.DataFrame], cluster_label_column: str = "cluster_label",
+def sort_filter_clusters(path_or_df: Union[str, pd.DataFrame], cluster_label_column: str = "cluster_label",
                          cluster_probability_column: str = "cluster_probability",
                          normalized_date_column: str = "date_normalized",
                          social_score_column: str = "social_score",
@@ -91,10 +91,36 @@ def sort_filter_clusters(path_or_df: Union[Path, pd.DataFrame], cluster_label_co
     return df
 
 
-def compute_cluster_social_scores(path_or_df: Union[Path, pd.DataFrame], cluster_label_column: str = "cluster_label",
-                                  social_score_column: str = "social_score") -> pd.DataFrame:
+def compute_cluster_info(path_or_df: Union[str, pd.DataFrame], cluster_label_column: str = "cluster_label",
+                         social_score_column: str = "social_score") -> pd.DataFrame:
     df = get_df(path_or_df)
-    df_ = df.groupby(by=[cluster_label_column])[social_score_column].sum()
-    df_ = df_.to_frame().sort_values(by=social_score_column, ascending=False)
-    df_.reset_index(inplace=True)
+    gf = df.groupby(by=[cluster_label_column])
+    df_contents: List[Dict[str, Any]] = []
+    for g in gf:
+        total_social_score = g[1][social_score_column].sum()
+        for i, row in g[1].iterrows():
+            df_contents.append(
+                {
+                    cluster_label_column: g[0],
+                    "cluster_probability": row["cluster_probability"],
+                    social_score_column: row[social_score_column],
+                    "total_social_score": total_social_score,
+                    "start_date": row["date_normalized"],
+                    "end_date": pd.Timestamp(row["date_normalized"]) + pd.Timedelta(days=1),
+                    "url": row["url"],
+                    "title": row["title"]
+                }
+            )
+    df_ = pd.DataFrame(df_contents)
+    df_.sort_values(by=["total_social_score"], ascending=False, inplace=True)
     return df_
+
+
+def get_top_n_cluster_labels(path_or_df: Union[str, pd.DataFrame], top_n_clusters: int,
+                             cluster_label_column: str = "cluster_label",
+                             social_score_column: str = "social_score") -> List[int]:
+    df = get_df(path_or_df)
+    df = df.groupby(by=[cluster_label_column])[social_score_column].sum()
+    df = df.to_frame().sort_values(by=social_score_column, ascending=False)
+    df.reset_index(inplace=True)
+    return df["cluster_label"][:top_n_clusters].tolist()

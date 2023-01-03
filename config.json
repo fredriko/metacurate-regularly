@@ -3,8 +3,9 @@
     "raw": "./data/news_urls.csv",
     "normalized": "./data/transient/news_urls_normalized.csv",
     "clustered": "./data/transient/news_urls_clustered.csv",
-    "cluster_scores": "./data/transient/cluster_scores.csv",
+    "cluster_info": "./data/transient/cluster_info.csv",
     "cluster_descriptions": "./data/transient/cluster_descriptions.csv",
+    "cluster_viz_data": "./data/transient/cluster_viz_data.csv",
     "cache": "./data/transient/.cache"
   },
   "resources": {

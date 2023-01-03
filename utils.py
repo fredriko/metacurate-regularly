@@ -34,8 +34,8 @@ def get_logger(name: Optional[str] = None):
     return logger
 
 
-def get_df(path_or_df: Union[Path, pd.DataFrame]) -> pd.DataFrame:
-    if isinstance(path_or_df, Path):
+def get_df(path_or_df: Union[str, pd.DataFrame]) -> pd.DataFrame:
+    if isinstance(path_or_df, str):
         df = pd.read_csv(path_or_df, lineterminator="\n")
     else:
         df = path_or_df

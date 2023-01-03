@@ -177,7 +177,7 @@ def compute_cohere_descriptors(path_or_dataframe: Union[Path, pd.DataFrame],
                                cluster_probability_column: str = "cluster_probability",
                                cluster_probability: Union[None, float] = 0.75,
                                num_sample_texts: int = 25,
-                               num_generations: int = 4) -> Union[None, pd.DataFrame]:
+                               num_generations: int = 5) -> Union[None, pd.DataFrame]:
     if not cohere_api_key:
         cohere_api_key = os.environ.get("COHERE_API_KEY", None)
         if not cohere_api_key:

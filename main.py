@@ -12,6 +12,7 @@ logger = get_logger("main")
 
 def main(config_file: str = "config.json", top_n_clusters: int = 100,
          cluster_probability_threshold: float = 0.7) -> None:
+
     c: DotMap = load_config(config_file)
 
     # Normalize data

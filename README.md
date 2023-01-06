@@ -1,10 +1,21 @@
 TODO
 
-* Reduce dimensionality (use the text-clustering project): might be necessary in order to be able to cluster all titles.
-* Cluster using hdbscan
-* Select top N clusters based on total social_score
-* Name top N clusters using Topically from Cohere
-* Visualize clusters such that each cluster is a sequence where the x axis is date and the y axis is the social score
-  * https://deparkes.co.uk/2021/09/05/python-timeline-plot/
-  * https://plotly.com/python/plot-data-from-csv/
-  * https://plotly.com/python/line-charts/
+* pre-commit, black, linting
+* Integrate viz into main.
+* Make sure it works end-to-end.
+* Refactor code.
+* Add command line argument for selecting other config file.
+
+## Set up chart studio
+
+https://jennifer-banks8585.medium.com/how-to-embed-interactive-plotly-visualizations-on-medium-blogs-710209f93bd
+
+
+```
+import chart_studio
+
+username = "<username>"
+api_key = "<api_key>"
+
+chart_studio.tools.set_credentials_file(username=username, api_key=api_key)
+```

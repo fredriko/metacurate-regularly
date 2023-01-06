@@ -6,6 +6,7 @@
     "cluster_info": "./data/transient/cluster_info.csv",
     "cluster_descriptions": "./data/transient/cluster_descriptions.csv",
     "cluster_viz_data": "./data/transient/cluster_viz_data.csv",
+    "cluster_viz_html": "./data/transient/metacurate_news_2022.html",
     "cache": "./data/transient/.cache"
   },
   "resources": {
@@ -17,7 +18,7 @@
   "clusterer": {
     "metric": "precomputed",
     "cluster_selection_method": "leaf",
-    "min_cluster_size": 5,
-    "min_samples": 2
+    "min_cluster_size": 7,
+    "min_samples": 1
   }
 }

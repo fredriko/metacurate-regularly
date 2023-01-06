@@ -36,7 +36,7 @@ def get_logger(name: Optional[str] = None):
 
 def get_df(path_or_df: Union[str, pd.DataFrame]) -> pd.DataFrame:
     if isinstance(path_or_df, str):
-        df = pd.read_csv(path_or_df, lineterminator="\n")
+        df = pd.read_csv(path_or_df, low_memory=False, lineterminator="\n")
     else:
         df = path_or_df
     return df

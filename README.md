@@ -1,5 +1,7 @@
 TODO
 
+* Viz: have plotly set width of image, but set height explicitly
+* Produce report/list of clusters w top n urls for Medium (markdown?)
 * pre-commit, black, linting
 * Integrate viz into main.
 * Make sure it works end-to-end.

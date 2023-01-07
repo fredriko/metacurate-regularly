@@ -1,11 +1,11 @@
-from typing import Union, Optional
+from typing import Union, Optional, List
 
 import chart_studio.plotly as py
 import pandas as pd
 import plotly.express as px
 import plotly.offline
 
-from utils import get_df
+from utils import get_df, get_top_n_cluster_labels
 
 
 def _adjust_description(d: str, cluster_label: str, max_len_chars: int = 60) -> str:
@@ -15,7 +15,8 @@ def _adjust_description(d: str, cluster_label: str, max_len_chars: int = 60) -> 
     return f"{d.replace('  ', ' ')} ({cluster_label})"
 
 
-def visualize(path_or_df: Union[str, pd.DataFrame], publish: bool = False, show: bool = True, save_html: bool = True,
+def visualize(path_or_df: Union[str, pd.DataFrame], visualize_top_n_clusters: int, publish: bool = False,
+              show: bool = True, save_html: bool = True,
               html_file_name: Optional[str] = "metacurate_news_2022.html",
               fig_name: Optional[str] = "metacurate_news_2022") -> None:
     df = get_df(path_or_df)
@@ -24,9 +25,11 @@ def visualize(path_or_df: Union[str, pd.DataFrame], publish: bool = False, show:
     df["cluster_probability"] = df["cluster_probability"].apply(lambda x: round(x, 2))
     df["cluster_descriptor"] = df.apply(lambda x: _adjust_description(x["cohere_descriptor"], x["cluster_label"]),
                                         axis=1)
-    num_clusters = df.groupby("cluster_label").ngroups
-    fig = px.timeline(df.sort_values('total_social_score', ascending=True),
-                      title=f"Top {num_clusters} news of 2022",
+    top_n: List[int] = get_top_n_cluster_labels(df, visualize_top_n_clusters)
+    df_viz = df[df["cluster_label"].isin(top_n)]
+
+    fig = px.timeline(df_viz.sort_values('total_social_score', ascending=True),
+                      title=f"Top {df_viz['cluster_label'].nunique()} news of 2022",
                       x_start="start",
                       x_end="end",
                       y="cluster_descriptor",

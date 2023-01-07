@@ -12,6 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from yake import KeywordExtractor
 
 from utils import get_logger, get_df
+from TopicallyClient import TopicallyClient
 
 logger = get_logger("Describe")
 
@@ -159,7 +160,7 @@ def _collect_text_from_column(df: pd.DataFrame, source_column: str, target_colum
     return df_grouped
 
 
-def _collapse_on_suffixes(terms: List[Tuple[str, float]]) -> List[str]:
+def _collapse_on_suffixes(terms: List[Tuple[str, float]]) -> List[Tuple[str, float]]:
     smret = [(term[0][::-1], term[1]) for term in terms]
     collapsed = _collapse_on_prefixes(smret)
     terms_ = [(term[0][::-1], term[1]) for term in collapsed]
@@ -184,7 +185,8 @@ def compute_cohere_descriptors(path_or_dataframe: Union[Path, pd.DataFrame],
             logger.warn("No API key given for Cohere service. Skipping computing of Cohere cluster descriptors.")
             return None
 
-    app = topically.Topically(cohere_api_key)
+    app = TopicallyClient(cohere_api_key)
+    #app = topically.Topically(cohere_api_key)
     df = get_df(path_or_dataframe)
     logger.info(f"Computing Cohere descriptors on data frame with {df.shape[0]} rows")
 
@@ -195,26 +197,23 @@ def compute_cohere_descriptors(path_or_dataframe: Union[Path, pd.DataFrame],
     clusters = df[cluster_label_column].tolist()
     logger.info(f"Will use {len(texts)} texts from which Cohere will select {num_sample_texts} for each cluster")
 
-    try:
-        _, topic_names = app.name_topics((texts, clusters), num_generations=num_generations,
-                                         num_sample_texts=num_sample_texts)
+    topic_names = app.name_topics(texts, clusters, num_generations=num_generations, num_sample_texts=num_sample_texts)
+    df_ = None
+    if topic_names is not None:
         df_ = pd.DataFrame(
             [{"cluster_label": label, "cohere_descriptor": desc} for label, desc, in topic_names.items()])
         df_.sort_values(by="cluster_label", ascending=True, inplace=True)
-        return df_
-    except cohere.error.CohereError as err:
-        logger.error(f"Could not fulfil Cohere request: {err}")
-        return None
+    return df_
 
 
 def describe(path_or_df: Union[Path, pd.DataFrame], cluster_labels: Optional[List[int]] = None,
-             cluster_label_column: str = "cluster_label") -> pd.DataFrame:
+             cluster_label_column: str = "cluster_label", cluster_probability: float = 0.75) -> pd.DataFrame:
     df = get_df(path_or_df)
     if cluster_labels:
         df = df[df[cluster_label_column].isin(cluster_labels)]
-    tfidf_desc_df = compute_tfidf_descriptors(df)
-    yake_desc_df = compute_yake_descriptors(df)
-    cohere_desc_df = compute_cohere_descriptors(df)
+    tfidf_desc_df = compute_tfidf_descriptors(df, cluster_probability=cluster_probability)
+    yake_desc_df = compute_yake_descriptors(df, cluster_probability=cluster_probability)
+    cohere_desc_df = compute_cohere_descriptors(df, cluster_probability=cluster_probability)
     df_ = tfidf_desc_df.merge(right=yake_desc_df, on=cluster_label_column, how="outer")
     if cohere_desc_df is not None:
         df_ = df_.merge(right=cohere_desc_df, on=cluster_label_column, how="outer")

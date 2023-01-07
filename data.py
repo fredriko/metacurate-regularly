@@ -1,9 +1,12 @@
+import re
 from pathlib import Path
 from typing import List, Optional, Union, Dict, Any
-import re
+
 import pandas as pd
-from utils import get_logger, get_df
+from dotmap import DotMap
 from tqdm import tqdm
+
+from utils import get_logger, get_df
 
 logger = get_logger("data")
 
@@ -55,8 +58,8 @@ def normalize_title(title: str, omit_strings: List[str], lower_case: bool = Fals
     return title.strip().lower() if lower_case else title.strip()
 
 
-def normalize_title_date(data_file: str, omit_strings_file: str, normalized_data_file: str,
-                         title_column: str = "title", date_column: str = "listed_at_date", **kwargs) -> None:
+def normalize_title_date(data_file: str, omit_strings_file: str, title_column: str = "title",
+                         date_column: str = "listed_at_date", **kwargs) -> pd.DataFrame:
     logger.info(f"Reading URL data from file: {data_file}")
     df = pd.read_csv(data_file)
     logger.info(f"Got {df.shape[0]} URLs.")
@@ -70,21 +73,24 @@ def normalize_title_date(data_file: str, omit_strings_file: str, normalized_data
     logger.info("Normalizing dates...")
     df["date_normalized"] = df[date_column].progress_apply(
         lambda x: pd.Timestamp(x).replace(hour=0, minute=0, second=0))
-    logger.info(f"Saving normalized URL data to file: {normalized_data_file}")
-    normalized_data_dir = Path(normalized_data_file).parent
+    return df
+
+
+def prep_output_directory(config: DotMap) -> None:
+    normalized_data_dir = Path(config.data.normalized).parent
     if not normalized_data_dir.exists():
+        logger.info(f"Creating output directory: {normalized_data_dir.resolve()}")
         normalized_data_dir.mkdir(parents=True)
-    df.to_csv(normalized_data_file, index=False)
 
 
 def sort_filter_clusters(path_or_df: Union[str, pd.DataFrame], cluster_label_column: str = "cluster_label",
                          cluster_probability_column: str = "cluster_probability",
                          normalized_date_column: str = "date_normalized",
                          social_score_column: str = "social_score",
-                         cluster_probability_threshold: float = 0.75) -> pd.DataFrame:
+                         cluster_probability: float = 0.75) -> pd.DataFrame:
     df = get_df(path_or_df)
     logger.info(f"Sorting and filtering data frame with {df.shape[0]} rows")
-    df = df[df[cluster_probability_column] >= cluster_probability_threshold]
+    df = df[df[cluster_probability_column] >= cluster_probability]
     df = df.sort_values(
         by=[cluster_label_column, normalized_date_column, social_score_column, cluster_probability_column],
         ascending=(False, False, False, False))
@@ -114,13 +120,3 @@ def compute_cluster_info(path_or_df: Union[str, pd.DataFrame], cluster_label_col
     df_ = pd.DataFrame(df_contents)
     df_.sort_values(by=["total_social_score"], ascending=False, inplace=True)
     return df_
-
-
-def get_top_n_cluster_labels(path_or_df: Union[str, pd.DataFrame], top_n_clusters: int,
-                             cluster_label_column: str = "cluster_label",
-                             social_score_column: str = "social_score") -> List[int]:
-    df = get_df(path_or_df)
-    df = df.groupby(by=[cluster_label_column])[social_score_column].sum()
-    df = df.to_frame().sort_values(by=social_score_column, ascending=False)
-    df.reset_index(inplace=True)
-    return df["cluster_label"][:top_n_clusters].tolist()

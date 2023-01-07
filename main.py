@@ -6,15 +6,17 @@ from describe import describe
 from utils import get_logger, load_config, get_df, get_top_n_cluster_labels
 from vectorize import SentenceTransformerVectorizer
 from visualize import visualize
+from typing import Optional
 
 import warnings
+
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 logger = get_logger("main")
 
 
 def main(config_file: str = "config.json", describe_top_n_clusters: int = 100, visualize_top_n_clusters: int = 50,
-         cluster_probability: float = 0.7) -> None:
+         cluster_probability: float = 0.7, height: Optional[int] = None, width: Optional[int] = None) -> None:
     c: DotMap = load_config(config_file)
     """
     # Prep directories
@@ -58,13 +60,15 @@ def main(config_file: str = "config.json", describe_top_n_clusters: int = 100, v
                          inplace=True)
     viz_data.to_csv(c.data.cluster_viz_data, index=False)
 
-    visualize(viz_data, visualize_top_n_clusters, save_html=True, html_file_name=c.data.cluster_viz_html, publish=False)
+    visualize(viz_data, visualize_top_n_clusters, save_html=True, html_file_name=c.data.cluster_viz_html, publish=False,
+              height=height)
 
 
 if __name__ == "__main__":
     config_file = "config.json"
     describe_n_clusters = 300
-    visualize_n_clusters = 30
-    cluster_probability = 0.7
+    visualize_n_clusters = 50
+    cluster_probability = 0.8
+    height = None
     main(config_file, describe_top_n_clusters=describe_n_clusters, visualize_top_n_clusters=visualize_n_clusters,
-         cluster_probability=cluster_probability)
+         cluster_probability=cluster_probability, height=height)

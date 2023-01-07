@@ -8,17 +8,18 @@ import plotly.offline
 from utils import get_df, get_top_n_cluster_labels
 
 
-def _adjust_description(d: str, cluster_label: str, max_len_chars: int = 60) -> str:
+def _adjust_description(d: str, cluster_label: str, max_len_chars: int = 70) -> str:
     d = d.replace("$", "USD")
     if len(d) > max_len_chars:
-        d = f"{d[:max_len_chars + 3]} …"
+        d = f"{d[:max_len_chars + 3]}…"
     return f"{d.replace('  ', ' ')} ({cluster_label})"
 
 
 def visualize(path_or_df: Union[str, pd.DataFrame], visualize_top_n_clusters: int, publish: bool = False,
               show: bool = True, save_html: bool = True,
               html_file_name: Optional[str] = "metacurate_news_2022.html",
-              fig_name: Optional[str] = "metacurate_news_2022") -> None:
+              fig_name: Optional[str] = "metacurate_news_2022",
+              height: Optional[int] = None, width: Optional[int] = None) -> None:
     df = get_df(path_or_df)
     df['start'] = pd.to_datetime(df['start_date'])
     df['end'] = pd.to_datetime(df['end_date'])
@@ -37,9 +38,11 @@ def visualize(path_or_df: Union[str, pd.DataFrame], visualize_top_n_clusters: in
                       color="total_social_score",
                       color_continuous_scale=[(0, "pink"), (0.5, "blue"), (1, "purple")],
                       template="plotly_dark",
+                      height=height,
+                      width=width,
                       labels={
                           "social_score": "# shares",
-                          "cluster_descriptor": "Cluster description"
+                          "cluster_descriptor": "Cluster description (cluster id)"
                       })
     fig.update_layout(xaxis_title="Date")
 

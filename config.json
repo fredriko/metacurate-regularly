@@ -6,7 +6,8 @@
     "cluster_info": "./data/transient/cluster_info.csv",
     "cluster_descriptions": "./data/transient/cluster_descriptions.csv",
     "cluster_viz_data": "./data/transient/cluster_viz_data.csv",
-    "cluster_viz_html": "./data/transient/metacurate_news_2022.html",
+    "cluster_viz_html": "./data/transient/metacurate_news_viz_2022.html",
+    "cluster_report": "./data/transient/metacurate_news_report_2022.md",
     "cache": "./data/transient/.cache"
   },
   "resources": {

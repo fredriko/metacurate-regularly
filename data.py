@@ -145,3 +145,25 @@ def compute_cluster_info(
     df_ = pd.DataFrame(df_contents)
     df_.sort_values(by=["total_social_score"], ascending=False, inplace=True)
     return df_
+
+
+def create_viz_data(
+    descriptions_path_or_df: Union[str, pd.DataFrame],
+    info_path_or_df: Union[str, pd.DataFrame],
+    cluster_label_column: str = "cluster_label",
+    total_social_score_column: str = "total_social_score",
+    start_date_column: str = "start_date",
+    social_score_column: str = "social_score",
+) -> pd.DataFrame:
+
+    cluster_descriptions = get_df(descriptions_path_or_df)
+    cluster_info = get_df(info_path_or_df)
+    viz_data = cluster_descriptions.merge(
+        right=cluster_info, on=[cluster_label_column], how="left"
+    )
+    viz_data.sort_values(
+        by=[total_social_score_column, start_date_column, social_score_column],
+        ascending=(False, True, False),
+        inplace=True,
+    )
+    return viz_data

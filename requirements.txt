@@ -13,3 +13,4 @@ cohere==2.1
 plotly-express==0.4.1
 plotly==5.11.0
 chart-studio==1.1.0
+w3lib==2.1.1

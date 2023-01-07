@@ -6,11 +6,15 @@ from data import (
     sort_filter_clusters,
     compute_cluster_info,
     prep_output_directory,
+    create_viz_data,
 )
 from describe import describe
 from utils import get_logger, load_config, get_df, get_top_n_cluster_labels
 from vectorize import SentenceTransformerVectorizer
 from visualize import visualize
+from report import report
+from report_strings import get_description
+
 from typing import Optional
 
 import warnings
@@ -24,14 +28,15 @@ def main(
     config_file: str = "config.json",
     describe_top_n_clusters: int = 100,
     visualize_top_n_clusters: int = 50,
+    report_top_n_clusters: int = 100,
     cluster_probability: float = 0.7,
     height: Optional[int] = None,
     width: Optional[int] = None,
 ) -> None:
     c: DotMap = load_config(config_file)
+
     # Prep directories
     prep_output_directory(c)
-
     # Normalize data
     df = normalize_title_date(c.data.raw, c.resources.omit_strings)
     df.to_csv(c.data.normalized, index=False)
@@ -67,19 +72,11 @@ def main(
     cluster_descriptions.to_csv(c.data.cluster_descriptions, index=False)
 
     # Create visualization data
-
     # TODO remove
-    # cluster_descriptions = get_df(c.data.cluster_descriptions)
+    cluster_descriptions = get_df(c.data.cluster_descriptions)
     cluster_info = get_df(c.data.cluster_info)
 
-    viz_data = cluster_descriptions.merge(
-        right=cluster_info, on=["cluster_label"], how="left"
-    )
-    viz_data.sort_values(
-        by=["total_social_score", "start_date", "social_score"],
-        ascending=(False, True, False),
-        inplace=True,
-    )
+    viz_data = create_viz_data(cluster_descriptions, cluster_info)
     viz_data.to_csv(c.data.cluster_viz_data, index=False)
 
     visualize(
@@ -90,6 +87,14 @@ def main(
         publish=False,
         height=height,
         width=width,
+        title=f"Top {visualize_top_n_clusters} AI/ML/data science and related news of 2022",
+    )
+
+    report(
+        viz_data,
+        c.data.cluster_report,
+        title=f"Top {report_top_n_clusters} AI/ML/data science and related news of 2022",
+        description=get_description(report_top_n_clusters),
     )
 
 
@@ -97,12 +102,14 @@ if __name__ == "__main__":
     config_file = "config.json"
     describe_n_clusters = 300
     visualize_n_clusters = 50
+    report_n_clusters = 200
     cluster_probability = 0.8
     height = None
     main(
         config_file,
         describe_top_n_clusters=describe_n_clusters,
         visualize_top_n_clusters=visualize_n_clusters,
+        report_top_n_clusters=report_n_clusters,
         cluster_probability=cluster_probability,
         height=height,
     )

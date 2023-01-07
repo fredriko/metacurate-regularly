@@ -9,7 +9,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from yake import KeywordExtractor
 
-from TopicallyClient import TopicallyClient
+from topically_client import TopicallyClient
 from utils import get_logger, get_df
 
 logger = get_logger("describe")

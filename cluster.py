@@ -16,7 +16,9 @@ def _compute_distance_matrix(embeddings: np.ndarray) -> np.ndarray:
     return distance_matrix
 
 
-def cluster(array_like: np.ndarray, data: pd.DataFrame, sort: bool = False, **kwargs) -> pd.DataFrame:
+def cluster(
+    array_like: np.ndarray, data: pd.DataFrame, sort: bool = False, **kwargs
+) -> pd.DataFrame:
     """
     :param array_like: Either vectors each of which represents a data point, or a distance matrix with pairwise
     distances for the vectors. In the latter case, make sure to set "metric" to "precomputed".
@@ -36,9 +38,13 @@ def cluster(array_like: np.ndarray, data: pd.DataFrame, sort: bool = False, **kw
     clusterer = hdbscan.HDBSCAN(**kwargs)
     start_time = time()
     clusterer.fit_predict(array_like)
-    logger.info(f"Clustered {array_like.shape} data in {round(time() - start_time, 2)} seconds")
+    logger.info(
+        f"Clustered {array_like.shape} data in {round(time() - start_time, 2)} seconds"
+    )
     data.insert(loc=0, column="cluster_label", value=clusterer.labels_)
     data.insert(loc=1, column="cluster_probability", value=clusterer.probabilities_)
     if sort:
-        data = data.sort_values(["cluster_label", "cluster_probability"], ascending=(False, False))
+        data = data.sort_values(
+            ["cluster_label", "cluster_probability"], ascending=(False, False)
+        )
     return data

@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import List, Optional, Union, Dict, Any
+from typing import Optional, Union, Any
 
 import pandas as pd
 from dotmap import DotMap
@@ -11,7 +11,7 @@ from utils import get_logger, get_df
 logger = get_logger("data")
 
 
-def load_omit_strings(omit_strings_file: str, string_column: str = "term") -> List[str]:
+def load_omit_strings(omit_strings_file: str, string_column: str = "term") -> list[str]:
     """
     Reads a CSV file with strings to omit from web page titles.
 
@@ -27,8 +27,12 @@ def load_omit_strings(omit_strings_file: str, string_column: str = "term") -> Li
     return df[string_column].to_list()
 
 
-def normalize_title(title: str, omit_strings: List[str], lower_case: bool = False,
-                    unaffected_titles: Optional[List[str]] = None) -> str:
+def normalize_title(
+    title: str,
+    omit_strings: list[str],
+    lower_case: bool = False,
+    unaffected_titles: Optional[list[str]] = None,
+) -> str:
     """
     Removes unwanted substrings from a web page title.
 
@@ -58,8 +62,13 @@ def normalize_title(title: str, omit_strings: List[str], lower_case: bool = Fals
     return title.strip().lower() if lower_case else title.strip()
 
 
-def normalize_title_date(data_file: str, omit_strings_file: str, title_column: str = "title",
-                         date_column: str = "listed_at_date", **kwargs) -> pd.DataFrame:
+def normalize_title_date(
+    data_file: str,
+    omit_strings_file: str,
+    title_column: str = "title",
+    date_column: str = "listed_at_date",
+    **kwargs,
+) -> pd.DataFrame:
     logger.info(f"Reading URL data from file: {data_file}")
     df = pd.read_csv(data_file)
     logger.info(f"Got {df.shape[0]} URLs.")
@@ -67,12 +76,15 @@ def normalize_title_date(data_file: str, omit_strings_file: str, title_column: s
     omit_strings = load_omit_strings(omit_strings_file)
     tqdm.pandas()
     logger.info("Normalizing titles...")
-    df["title_normalized"] = df[title_column].progress_apply(lambda x: normalize_title(x, omit_strings, **kwargs))
+    df["title_normalized"] = df[title_column].progress_apply(
+        lambda x: normalize_title(x, omit_strings, **kwargs)
+    )
     df.insert(loc=1, column="title_normalized", value=df.pop("title_normalized"))
 
     logger.info("Normalizing dates...")
     df["date_normalized"] = df[date_column].progress_apply(
-        lambda x: pd.Timestamp(x).replace(hour=0, minute=0, second=0))
+        lambda x: pd.Timestamp(x).replace(hour=0, minute=0, second=0)
+    )
     return df
 
 
@@ -83,25 +95,37 @@ def prep_output_directory(config: DotMap) -> None:
         normalized_data_dir.mkdir(parents=True)
 
 
-def sort_filter_clusters(path_or_df: Union[str, pd.DataFrame], cluster_label_column: str = "cluster_label",
-                         cluster_probability_column: str = "cluster_probability",
-                         normalized_date_column: str = "date_normalized",
-                         social_score_column: str = "social_score",
-                         cluster_probability: float = 0.75) -> pd.DataFrame:
+def sort_filter_clusters(
+    path_or_df: Union[str, pd.DataFrame],
+    cluster_label_column: str = "cluster_label",
+    cluster_probability_column: str = "cluster_probability",
+    normalized_date_column: str = "date_normalized",
+    social_score_column: str = "social_score",
+    cluster_probability: float = 0.75,
+) -> pd.DataFrame:
     df = get_df(path_or_df)
     logger.info(f"Sorting and filtering data frame with {df.shape[0]} rows")
     df = df[df[cluster_probability_column] >= cluster_probability]
     df = df.sort_values(
-        by=[cluster_label_column, normalized_date_column, social_score_column, cluster_probability_column],
-        ascending=(False, False, False, False))
+        by=[
+            cluster_label_column,
+            normalized_date_column,
+            social_score_column,
+            cluster_probability_column,
+        ],
+        ascending=(False, False, False, False),
+    )
     return df
 
 
-def compute_cluster_info(path_or_df: Union[str, pd.DataFrame], cluster_label_column: str = "cluster_label",
-                         social_score_column: str = "social_score") -> pd.DataFrame:
+def compute_cluster_info(
+    path_or_df: Union[str, pd.DataFrame],
+    cluster_label_column: str = "cluster_label",
+    social_score_column: str = "social_score",
+) -> pd.DataFrame:
     df = get_df(path_or_df)
     gf = df.groupby(by=[cluster_label_column])
-    df_contents: List[Dict[str, Any]] = []
+    df_contents: list[dict[str, Any]] = []
     for g in gf:
         total_social_score = g[1][social_score_column].sum()
         for i, row in g[1].iterrows():
@@ -112,9 +136,10 @@ def compute_cluster_info(path_or_df: Union[str, pd.DataFrame], cluster_label_col
                     social_score_column: row[social_score_column],
                     "total_social_score": total_social_score,
                     "start_date": row["date_normalized"],
-                    "end_date": pd.Timestamp(row["date_normalized"]) + pd.Timedelta(days=1),
+                    "end_date": pd.Timestamp(row["date_normalized"])
+                    + pd.Timedelta(days=1),
                     "url": row["url"],
-                    "title": row["title"]
+                    "title": row["title"],
                 }
             )
     df_ = pd.DataFrame(df_contents)

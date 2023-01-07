@@ -1,13 +1,13 @@
 import json
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Union, List
+from typing import Any, Optional, Union
 
 import pandas as pd
 from dotmap import DotMap
 
 
-def from_json(filepath: Path) -> Dict[str, Any]:
+def from_json(filepath: Path) -> dict[str, Any]:
     with filepath.open(mode="r") as fh:
         data = json.load(fh)
     return data
@@ -42,9 +42,12 @@ def get_df(path_or_df: Union[str, pd.DataFrame]) -> pd.DataFrame:
     return df
 
 
-def get_top_n_cluster_labels(path_or_df: Union[str, pd.DataFrame], top_n_clusters: int,
-                             cluster_label_column: str = "cluster_label",
-                             social_score_column: str = "social_score") -> List[int]:
+def get_top_n_cluster_labels(
+    path_or_df: Union[str, pd.DataFrame],
+    top_n_clusters: int,
+    cluster_label_column: str = "cluster_label",
+    social_score_column: str = "social_score",
+) -> list[int]:
     df = get_df(path_or_df)
     df = df.groupby(by=[cluster_label_column])[social_score_column].sum()
     df = df.to_frame().sort_values(by=social_score_column, ascending=False)

@@ -6,7 +6,7 @@ import cohere.error
 import pandas as pd
 import topically
 
-from utils import get_logger
+from src.utils import get_logger
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -48,7 +48,7 @@ class TopicallyClient:
         clusters: list[int],
         max_chunk_size: int = 100,
         num_generations: int = 5,
-        num_sample_texts: int = 25,
+        num_sample_texts: int = 20,
     ) -> Union[None, dict[int, str]]:
 
         chunks: list[tuple[list[str], list[int]]] = self._chunk_input(

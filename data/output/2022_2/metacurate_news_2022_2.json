@@ -1,0 +1,35 @@
+{
+  "params": {
+    "visualize_top_n": 50,
+    "report_top_n": 200,
+    "cluster_probability": 0.75,
+    "title": "Top AI/ML/data science and related news of 2022",
+    "publish_to_plotly": true,
+    "plotly_file_name": "metacurate_top_ai_ml_news_2022_2"
+  },
+  "data": {
+    "raw": "./data/metacurate_news_2022.csv",
+    "normalized": "./data/transient/normalized.csv",
+    "clustered": "./data/transient/clustered.csv",
+    "cluster_info": "./data/transient/cluster_info.csv",
+    "cluster_descriptions": "./data/transient/cluster_descriptions.csv",
+    "cluster_viz_data": "./data/output/2022_2/cluster_viz_data.csv",
+    "cluster_viz_html": "./data/output/2022_2/metacurate_news_viz_2022.html",
+    "cluster_report": "./data/output/2022_2/metacurate_news_report_2022.md",
+    "cache": "./data/transient/.cache"
+  },
+  "resources": {
+    "omit_strings": "./resources/omit_strings.csv"
+  },
+  "vectorizer": {
+    "model_name_or_path": "all-mpnet-base-v2"
+  },
+  "clusterer": {
+    "metric": "precomputed",
+    "cluster_selection_method": "leaf",
+    "min_cluster_size": 20,
+    "min_samples": 2,
+    "cluster_selection_epsilon":0.05,
+    "memory": "./data/transient/.cache"
+  }
+}

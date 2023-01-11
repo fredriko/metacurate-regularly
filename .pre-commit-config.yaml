@@ -1,4 +1,4 @@
-exclude: ^(data/|resources/)
+exclude: ^(data/|resources/|configs/)
 default_stages: [ commit ]
 
 repos:
@@ -13,7 +13,7 @@ repos:
     rev: 22.8.0
     hooks:
       - id: black
-        exclude: ^(data/|resources/)
+        exclude: ^(data/|resources/|configs/)
         language_version: python3
 
   - repo: https://github.com/PyCQA/flake8

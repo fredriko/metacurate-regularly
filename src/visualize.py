@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.offline
 
-from utils import get_df, get_top_n_cluster_labels, get_logger
+from src.utils import get_df, get_top_n_cluster_labels, get_logger
 
 logger = get_logger("visualize")
 
@@ -19,12 +19,12 @@ def _adjust_description(d: str, cluster_label: str, max_len_chars: int = 70) -> 
 
 def visualize(
     path_or_df: Union[str, pd.DataFrame],
-    visualize_top_n_clusters: int,
+    visualize_top_n_clusters: int = 50,
     publish: bool = False,
     show: bool = True,
     save_html: bool = True,
-    html_file_name: Optional[str] = "metacurate_news_2022.html",
-    fig_name: Optional[str] = "metacurate_news_2022",
+    html_file_name: Optional[str] = "visualization.html",
+    plotly_file_name: Optional[str] = "visualization",
     height: Optional[int] = None,
     width: Optional[int] = None,
     title: Optional[str] = None,
@@ -56,7 +56,7 @@ def visualize(
         height=height,
         width=width,
         labels={
-            "social_score": "# shares",
+            "total_social_score": "# shares",
             "cluster_descriptor": "Cluster description (cluster id)",
         },
     )
@@ -68,5 +68,5 @@ def visualize(
         logger.info(f"Saving visualization to file: {html_file_name}")
         plotly.offline.plot(fig, filename=html_file_name)
     if publish:
-        logger.info(f"Publishing figure named '{fig_name}ä to Plotly")
-        py.plot(fig, filename=fig_name, auto_open=True)
+        logger.info(f"Publishing figure named '{plotly_file_name}' to Plotly")
+        py.plot(fig, filename=plotly_file_name, auto_open=True)

@@ -9,8 +9,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from yake import KeywordExtractor
 
-from topically_client import TopicallyClient
-from utils import get_logger, get_df
+from src.topically_client import TopicallyClient
+from src.utils import get_logger, get_df
 
 logger = get_logger("describe")
 
@@ -225,7 +225,7 @@ def compute_cohere_descriptors(
     text_column: str = "title_normalized",
     cluster_probability_column: str = "cluster_probability",
     cluster_probability: Union[None, float] = 0.75,
-    num_sample_texts: int = 25,
+    num_sample_texts: int = 20,
     num_generations: int = 5,
 ) -> Union[None, pd.DataFrame]:
     if not cohere_api_key:

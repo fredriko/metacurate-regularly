@@ -1,23 +1,72 @@
-TODO
+# metacurate.io: Top _N_ AI/ML/data science news of 2022.
 
-* Viz: have plotly set width of image, but set height explicitly
-* Produce report/list of clusters w top n urls for Medium (markdown?)
-* pre-commit, black, linting
-* Integrate viz into main.
-* Make sure it works end-to-end.
-* Refactor code.
-* Add command line argument for selecting other config file.
+This repository contains the code required to generate...
 
-## Set up chart studio
+Live Plotly graph here...
 
-https://jennifer-banks8585.medium.com/how-to-embed-interactive-plotly-visualizations-on-medium-blogs-710209f93bd
+Link to list with top N news stories here...
 
+## TODO
+* Run final version of clustering, description, viz, report.
+* README
+* Medium/LinkedIn article:
+  * Top list
+  * Behind the scenes w code
 
+## Install
+This section contains instructions for how to install the code, resources, and dependencies
+needed to reproduce the clustering of the news headlines available in
+[metacurate_news_2022.csv](data/metacurate_news_2022.csv).
+
+### Requirements
+
+* git
+* Python (this repo was developed using Python 3.9)
+* pip
+* virtualenv
+* An API key from Cohere
+* Optional: Plotly Chart Studio credentials
+
+### Create and activate a virtual environment
+
+### Clone this repository
+
+### Install dependencies
+
+### Get and set up a Cohere API Key
+
+In order to use [Topically](link) to describe the clusters, you need to have an API key
+from Cohere. Get a free API account/key for Cohere here. Take note of the key, and set
+the environment variable `COHERE_API_KEY` like so:
+
+```bash
+export COHERE_API_KEY=<your_key>
 ```
-import chart_studio
 
-username = "<username>"
-api_key = "<api_key>"
 
-chart_studio.tools.set_credentials_file(username=username, api_key=api_key)
+### Optional: Get and set up Plotly Chart Studio credentials
+In order to publish the generated Plotly plot to the web (Plotly Chart studio), you need to
+have an account and set up the credentials locally. Follow the instructions for getting an
+account
+[here](https://jennifer-banks8585.medium.com/how-to-embed-interactive-plotly-visualizations-on-medium-blogs-710209f93bd)
+and edit the file [set_up_plotly_credentials.py](src/set_up_plotly_credentials.py) to include
+your `username` and `api_key`.
+
+Run the file:
+
+```bash
+python chart_studio.py
 ```
+
+to generate and store the credentials. This only has to be done once.
+
+## Run
+
+To run the code, simply issue the following:
+
+````bash
+python main.py
+````
+
+NOTE that this is a long-running process: the vectorization step will take a long time (up to an
+hour) if you're running on a CPU, and the clustering takes quite some time too.

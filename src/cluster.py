@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 
-from utils import get_logger
+from src.utils import get_logger
 
 logger = get_logger("cluster")
 

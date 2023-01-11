@@ -7,7 +7,7 @@ import torch
 from joblib import Memory
 from sentence_transformers import SentenceTransformer
 
-from utils import get_logger
+from src.utils import get_logger
 
 logger = get_logger("vectorize")
 

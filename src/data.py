@@ -5,8 +5,8 @@ from typing import Optional, Union, Any
 import pandas as pd
 from dotmap import DotMap
 from tqdm import tqdm
-
-from utils import get_logger, get_df
+import shutil
+from src.utils import get_logger, get_df
 
 logger = get_logger("data")
 
@@ -62,7 +62,7 @@ def normalize_title(
     return title.strip().lower() if lower_case else title.strip()
 
 
-def normalize_title_date(
+def normalize_data(
     data_file: str,
     omit_strings_file: str,
     title_column: str = "title",
@@ -88,11 +88,22 @@ def normalize_title_date(
     return df
 
 
-def prep_output_directory(config: DotMap) -> None:
-    normalized_data_dir = Path(config.data.normalized).parent
-    if not normalized_data_dir.exists():
-        logger.info(f"Creating output directory: {normalized_data_dir.resolve()}")
-        normalized_data_dir.mkdir(parents=True)
+def prep_directory_structure(config: DotMap) -> None:
+    transient_data_dir = Path(config.data.normalized).parent
+    output_data_dir = Path(config.data.cluster_report).parent
+    if not transient_data_dir.exists():
+        logger.info(f"Creating transient directory: {transient_data_dir.resolve()}")
+        transient_data_dir.mkdir(parents=True)
+    if not output_data_dir.exists():
+        logger.info(f"Creating output directory: {output_data_dir.resolve()}")
+        output_data_dir.mkdir(parents=True)
+
+
+def copy_config(config: DotMap, config_file: str) -> None:
+    output_data_dir = Path(config.data.cluster_report).parent
+    if not output_data_dir.exists():
+        output_data_dir.mkdir(parents=True)
+    shutil.copy(Path(config_file), output_data_dir)
 
 
 def sort_filter_clusters(
@@ -155,7 +166,6 @@ def create_viz_data(
     start_date_column: str = "start_date",
     social_score_column: str = "social_score",
 ) -> pd.DataFrame:
-
     cluster_descriptions = get_df(descriptions_path_or_df)
     cluster_info = get_df(info_path_or_df)
     viz_data = cluster_descriptions.merge(

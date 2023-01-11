@@ -9,7 +9,7 @@ from typing import Union, Optional
 import pandas as pd
 from w3lib.url import canonicalize_url, url_query_cleaner
 
-from utils import get_df, get_logger, get_top_n_cluster_labels
+from src.utils import get_df, get_logger, get_top_n_cluster_labels
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 

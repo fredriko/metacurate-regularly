@@ -1,44 +1,43 @@
+import argparse
+import warnings
+
 from dotmap import DotMap
 
-from cluster import cluster
-from data import (
-    normalize_title_date,
+from src.cluster import cluster
+from src.data import (
+    normalize_data,
     sort_filter_clusters,
     compute_cluster_info,
-    prep_output_directory,
+    prep_directory_structure,
     create_viz_data,
+    copy_config,
 )
-from describe import describe
-from utils import get_logger, load_config, get_df, get_top_n_cluster_labels
-from vectorize import SentenceTransformerVectorizer
-from visualize import visualize
-from report import report
-from report_strings import get_description
-
-from typing import Optional
-
-import warnings
+from src.describe import describe
+from src.report import report
+from src.utils import get_logger, load_config, get_top_n_cluster_labels
+from src.vectorize import SentenceTransformerVectorizer
+from src.visualize import visualize
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 logger = get_logger("main")
 
 
-def main(
-    config_file: str = "config.json",
-    describe_top_n_clusters: int = 100,
-    visualize_top_n_clusters: int = 50,
-    report_top_n_clusters: int = 100,
-    cluster_probability: float = 0.7,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-) -> None:
+def main(config_file: str) -> None:
     c: DotMap = load_config(config_file)
+    logger.info(f"Got config: {c}")
 
-    # Prep directories
-    prep_output_directory(c)
+    describe_n = (
+        c.params.report_top_n
+        if c.params.report_top_n > c.params.visualize_top_n
+        else c.params.visualize_top_n
+    )
+
+    prep_directory_structure(c)
+    copy_config(c, config_file)
+
     # Normalize data
-    df = normalize_title_date(c.data.raw, c.resources.omit_strings)
+    df = normalize_data(c.data.raw, c.resources.omit_strings)
     df.to_csv(c.data.normalized, index=False)
 
     # Vectorize
@@ -57,59 +56,55 @@ def main(
     clusters.to_csv(c.data.clustered, index=False)
 
     # Post-process clusters
-    clusters = sort_filter_clusters(clusters, cluster_probability=cluster_probability)
+    clusters = sort_filter_clusters(
+        clusters, cluster_probability=c.params.cluster_probability
+    )
     clusters.to_csv(c.data.clustered, index=False)
     cluster_info = compute_cluster_info(clusters)
     cluster_info.to_csv(c.data.cluster_info, index=False)
 
     # Describe
-    cluster_labels = get_top_n_cluster_labels(
-        cluster_info, top_n_clusters=describe_top_n_clusters
-    )
+    cluster_labels = get_top_n_cluster_labels(cluster_info, top_n_clusters=describe_n)
     cluster_descriptions = describe(
-        clusters, cluster_labels=cluster_labels, cluster_probability=cluster_probability
+        clusters,
+        cluster_labels=cluster_labels,
+        cluster_probability=c.params.cluster_probability,
     )
     cluster_descriptions.to_csv(c.data.cluster_descriptions, index=False)
 
     # Create visualization data
-    # TODO remove
-    cluster_descriptions = get_df(c.data.cluster_descriptions)
-    cluster_info = get_df(c.data.cluster_info)
-
     viz_data = create_viz_data(cluster_descriptions, cluster_info)
     viz_data.to_csv(c.data.cluster_viz_data, index=False)
 
     visualize(
         viz_data,
-        visualize_top_n_clusters,
+        visualize_top_n_clusters=c.params.visualize_top_n,
         save_html=True,
         html_file_name=c.data.cluster_viz_html,
-        publish=False,
-        height=height,
-        width=width,
-        title=f"Top {visualize_top_n_clusters} AI/ML/data science and related news of 2022",
+        plotly_file_name=c.params.plotly_file_name,
+        publish=c.params.publish_to_plotly,
+        title=c.params.title,
     )
 
     report(
         viz_data,
         c.data.cluster_report,
-        title=f"Top {report_top_n_clusters} AI/ML/data science and related news of 2022",
-        description=get_description(report_top_n_clusters),
+        title=c.params.title,
+        top_n_clusters=c.params.report_top_n,
     )
+
+
+def setup_argparse() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser()
+    p.add_argument(
+        "-c",
+        "--config",
+        type=str,
+        help="Specify the configuration file to use.",
+        required=True,
+    )
+    return p
 
 
 if __name__ == "__main__":
-    config_file = "config.json"
-    describe_n_clusters = 300
-    visualize_n_clusters = 50
-    report_n_clusters = 200
-    cluster_probability = 0.8
-    height = None
-    main(
-        config_file,
-        describe_top_n_clusters=describe_n_clusters,
-        visualize_top_n_clusters=visualize_n_clusters,
-        report_top_n_clusters=report_n_clusters,
-        cluster_probability=cluster_probability,
-        height=height,
-    )
+    main(setup_argparse().parse_args().config)

@@ -3,12 +3,12 @@
 **TL;DR:** This repository contains an experiment for **embedding** and **clustering** news headlines, as well as for
 **describing** the resulting clusters, and **plotting** them on a timeline.
 
-**VERBOSE:** The screenshot below shows the output of the clustering exercise: the top 50 news in 2022 regarding AI,
+The screenshot below shows the output of the clustering exercise: the top 50 news in 2022 regarding AI,
 machine learning, data science, and related fields based on data collected by [metacurate.io](https://metacurate.io).
+The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed).
 
 ![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
 
-The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed).
 
 ## Background
 

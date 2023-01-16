@@ -5,26 +5,26 @@
 
 The screenshot below shows the output of the clustering exercise: the top 50 news in 2022 regarding AI,
 machine learning, data science, and related fields based on data collected by [metacurate.io](https://metacurate.io).
-The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed).
+Here is the [live graph](https://chart-studio.plotly.com/~Fredrik/185.embed).
 
 ![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
 
 
-## Background
 
-Last year, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
+In 2022, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
 related to artificial intelligence, machine learning, natural language processing, data science, and other tech
 news. This repository contains code for experimenting with clustering headlines, and describing the clusters.
 
+* The data is available in [data/metacurate_news_2022.csv](data/metacurate_news_2022.csv).
+* The headlines are embedded using the [Sentence Transformers](https://github.com/UKPLab/sentence-transformers)
+library (see [src/vectorize.py](src/vectorize.py)).
+* [HDBSCAN](https://github.com/scikit-learn-contrib/hdbscan/) is used for clustering
+(see [src/cluster.py](src/cluster.py)).
+* The [Topically](https://github.com/cohere-ai/sandbox-topically), and [YAKE](https://github.com/LIAAD/yake) are used
+for generating and extracting cluster descriptions, respectively (see [src/describe](src/describe.py)).
+* Finally, [Plotly Express](https://github.com/plotly/plotly.py) is used for creating the timeline plot of the
+clusters (see [src/visualize.py](src/visualize.py)).
 
-
-
-## TODO
-* Run final version of clustering, description, viz, report.
-* README
-* Medium/LinkedIn article:
-  * Top list
-  * Behind the scenes w code
 
 ## Installation
 This section contains instructions for how to install the code, resources, and dependencies

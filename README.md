@@ -2,7 +2,9 @@
 
 This repository contains the code required to generate...
 
-Live Plotly graph here...
+![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
+
+The live graphs is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed)
 
 Link to list with top N news stories here...
 

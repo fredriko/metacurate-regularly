@@ -15,15 +15,16 @@ In 2022, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ 
 related to artificial intelligence, machine learning, natural language processing, data science, and other tech
 news. This repository contains code for experimenting with clustering headlines, and describing the clusters.
 
-* The data is available in [data/metacurate_news_2022.csv](data/metacurate_news_2022.csv).
-* The headlines are embedded using the [Sentence Transformers](https://github.com/UKPLab/sentence-transformers)
-library (see [src/vectorize.py](src/vectorize.py)).
-* [HDBSCAN](https://github.com/scikit-learn-contrib/hdbscan/) is used for clustering
-(see [src/cluster.py](src/cluster.py)).
-* The [Topically](https://github.com/cohere-ai/sandbox-topically), and [YAKE](https://github.com/LIAAD/yake) are used
-for generating and extracting cluster descriptions, respectively (see [src/describe](src/describe.py)).
-* Finally, [Plotly Express](https://github.com/plotly/plotly.py) is used for creating the timeline plot of the
-clusters (see [src/visualize.py](src/visualize.py)).
+The input data is available in [data/metacurate_news_2022.csv](data/metacurate_news_2022.csv). Example output
+is available in [data/output/2022_1/](data/output/2022_1/). The output folder contains:
+
+* A copy of the configuration file used for generating the output, e.g.,
+[metacurate_news_2022_1.json](data/output/2022_1/metacurate_news_2022_1.json).
+* A copy of the CSV file containing the data used for creating the visualization, e.g.,
+[cluster_viz_data.csv](data/output/2022_1/cluster_viz_data.csv).
+* A local file containing the visualization as seen in the screenshot above, e.g.,
+[metacurate_news_viz_2022.html](data/output/2022_1/metacurate_news_viz_2022.html).
+* A list of the top N news clusters, e.g., [README.md](data/output/2022_1/README.md).
 
 
 ## Installation

@@ -1,7 +1,8 @@
-# metacurate-regularly: an experiment in clustering news headlines.
+# metacurate-regularly: clustering of news headlines.
 
-This repository contains an experiment for embedding and clustering news headlines, as well as for describing
-the resulting clusters, and plotting them on a timeline.
+**TL;DR:** This repository contains an experiment for embedding and clustering news headlines, as well as for describing
+the resulting clusters, and plotting them on a timeline. The screenshot below shows the top 50 news in 2022 regarding
+AI, machine learning, data science, and related fields.
 
 ![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
 
@@ -9,7 +10,11 @@ The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.
 represents a news item. Hover over an item to see the corresponding headline, cluster probability, social
 shares, and other information.
 
-Link to list with top N news stories here...
+**VERBOSE:** Last year, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
+related to artificial intelligence, machine learning, natural language processing, data science, and other tech
+news. This repository contains code for experimenting with clustering headlines, and describing the clusters.
+
+
 
 ## TODO
 * Run final version of clustering, description, viz, report.

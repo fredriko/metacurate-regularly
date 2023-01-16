@@ -1,18 +1,21 @@
 # metacurate-regularly: clustering of news headlines.
 
-**TL;DR:** This repository contains an experiment for embedding and clustering news headlines, as well as for describing
-the resulting clusters, and plotting them on a timeline. The screenshot below shows the top 50 news in 2022 regarding
-AI, machine learning, data science, and related fields.
+**TL;DR:** This repository contains an experiment for **embedding** and **clustering** news headlines, as well as for
+**describing** the resulting clusters, and **plotting** them on a timeline.
+
+**VERBOSE:** The screenshot below shows the output of the clustering exercise: the top 50 news in 2022 regarding AI,
+machine learning, data science, and related fields based on data collected by [metacurate.io](https://metacurate.io).
 
 ![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
 
-The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed). Each mark in the graph
-represents a news item. Hover over an item to see the corresponding headline, cluster probability, social
-shares, and other information.
+The live graph is available [here](https://chart-studio.plotly.com/~Fredrik/185.embed).
 
-**VERBOSE:** Last year, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
+## Background
+
+Last year, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
 related to artificial intelligence, machine learning, natural language processing, data science, and other tech
 news. This repository contains code for experimenting with clustering headlines, and describing the clusters.
+
 
 
 
@@ -23,7 +26,7 @@ news. This repository contains code for experimenting with clustering headlines,
   * Top list
   * Behind the scenes w code
 
-## Install
+## Installation
 This section contains instructions for how to install the code, resources, and dependencies
 needed to reproduce the clustering of the news headlines available in
 [metacurate_news_2022.csv](data/metacurate_news_2022.csv).
@@ -70,7 +73,7 @@ python chart_studio.py
 
 to generate and store the credentials. This only has to be done once.
 
-## Run
+## Run the code
 
 To run the code, simply issue the following:
 

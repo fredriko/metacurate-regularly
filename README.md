@@ -28,13 +28,12 @@ clusters (see [src/visualize.py](src/visualize.py)).
 
 ## Installation
 This section contains instructions for how to install the code, resources, and dependencies
-needed to reproduce the clustering of the news headlines available in
-[metacurate_news_2022.csv](data/metacurate_news_2022.csv).
+needed to reproduce the clustering of the news headlines as shown in the screenshot above.
 
 ### Requirements
 
 * git
-* Python (this repo was developed using Python 3.9)
+* Python (this repo has been tested using Python 3.9)
 * pip
 * virtualenv
 * An API key from Cohere
@@ -48,9 +47,9 @@ needed to reproduce the clustering of the news headlines available in
 
 ### Get and set up a Cohere API Key
 
-In order to use [Topically](link) to describe the clusters, you need to have an API key
-from Cohere. Get a free API account/key for Cohere here. Take note of the key, and set
-the environment variable `COHERE_API_KEY` like so:
+In order to use [Topically](https://github.com/cohere-ai/sandbox-topically) to describe the clusters,
+you need to have an API key from [cohere](https://cohere.ai/). Get an API key by following the instructions in the
+Topically repository. Take note of the key, and set the environment variable `COHERE_API_KEY` like so:
 
 ```bash
 export COHERE_API_KEY=<your_key>
@@ -58,6 +57,7 @@ export COHERE_API_KEY=<your_key>
 
 
 ### Optional: Get and set up Plotly Chart Studio credentials
+
 In order to publish the generated Plotly plot to the web (Plotly Chart studio), you need to
 have an account and set up the credentials locally. Follow the instructions for getting an
 account
@@ -68,7 +68,7 @@ your `username` and `api_key`.
 Run the file:
 
 ```bash
-python chart_studio.py
+python src/set_up_plotly_credentials.py
 ```
 
 to generate and store the credentials. This only has to be done once.
@@ -78,7 +78,7 @@ to generate and store the credentials. This only has to be done once.
 To run the code, simply issue the following:
 
 ````bash
-python main.py
+python main.py -c configs/metacurate_news_2022_1.json
 ````
 
 NOTE that this is a long-running process: the vectorization step will take a long time (up to an

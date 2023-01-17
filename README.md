@@ -13,7 +13,7 @@ Here is the [live graph](https://chart-studio.plotly.com/~Fredrik/185.embed).
 
 In 2022, my hobby project [metacurate.io](https://metacurate.io) collected 54k+ news items from sources
 related to artificial intelligence, machine learning, natural language processing, data science, and other tech
-news. This repository contains code for experimenting with clustering headlines, and describing the clusters.
+news. This repository contains code for experimenting with the clustering of headlines, and describing the clusters.
 
 The input data is available in [data/metacurate_news_2022.csv](data/metacurate_news_2022.csv). Example output
 is available in [data/output/2022_1/](data/output/2022_1/). The output folder contains:
@@ -28,23 +28,33 @@ is available in [data/output/2022_1/](data/output/2022_1/). The output folder co
 
 
 ## Installation
-This section contains instructions for how to install the code, resources, and dependencies
-needed to reproduce the clustering of the news headlines as shown in the screenshot above.
+Follow the instructions below to install the code and reproduce the results.
+## Installation with virtualenv
 
-### Requirements
+Requirements:
 
 * git
-* Python (this repo has been tested using Python 3.9)
+* python 3.9 or newer (it might work with earlier versions, but it has not been tested)
 * pip
 * virtualenv
 * An API key from Cohere
 * Optional: Plotly Chart Studio credentials
 
-### Create and activate a virtual environment
+Set up and activate a virtual Python environment by executing the following commands at a terminal prompt:
 
-### Clone this repository
+```bash
+mkdir ~/venv
+virtualenv -p python3 ~/venv/metacurate-regularly/
+source ~/venv/metacurate-regularly/bin/activate
+```
 
-### Install dependencies
+Clone the source code to your local machine and install its dependencies:
+
+```bash
+git clone git@github.com:fredriko/metacurate-regularly.git
+cd metacurate-regularly
+pip install -r requirements.txt
+```
 
 ### Get and set up a Cohere API Key
 
@@ -82,5 +92,5 @@ To run the code, simply issue the following:
 python main.py -c configs/metacurate_news_2022_1.json
 ````
 
-NOTE that this is a long-running process: the vectorization step will take a long time (up to an
-hour) if you're running on a CPU, and the clustering takes quite some time too.
+NOTE that this is a long-running process: the vectorization step will take a long time if you're running on a CPU,
+and the clustering takes quite some time too.

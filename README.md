@@ -5,7 +5,8 @@
 
 The screenshot below shows the output of the clustering exercise: the top 50 news in 2022 regarding AI,
 machine learning, data science, and related fields based on data collected by [metacurate.io](https://metacurate.io).
-Here is the [live graph](https://chart-studio.plotly.com/~Fredrik/185.embed).
+Here is the [live graph](https://chart-studio.plotly.com/~Fredrik/185.embed) showing the top 50 news stories, and here
+is a [list of the 200 top stories](data/output/2022_1/README.md), including all constituent headlines.
 
 ![Top 50 AI/ML/data science news 2022 according to metacurate.io](assets/metacurate_top_50_news_2022.png)
 

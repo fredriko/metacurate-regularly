@@ -27,8 +27,6 @@ is available in [data/output/2022_1/](data/output/2022_1/). The output folder co
 * A list of the top N news clusters, e.g., [README.md](data/output/2022_1/README.md).
 
 
-## Installation
-Follow the instructions below to install the code and reproduce the results.
 ## Installation with virtualenv
 
 Requirements:
